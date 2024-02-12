@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "devisfacturegen"
+version = "1.0.0"
+description = "Application Streamlit permettant de générer des devis et factures avec les informations client, prestations etc.."
+authors = ["Hassan TILKI <hassan.tlk@outlook.fr>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fpdf = "^1.7.2"
+streamlit = "^1.31.0"
+num2words = "^0.5.13"
+pandas = "1.5.3"
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.2.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
