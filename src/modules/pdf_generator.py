@@ -123,7 +123,7 @@ class PDF(FPDF):
         self.cell(
             0,
             10,
-            f"Le montant total à régler s'élève à : {self.montant_total_output}",
+            f"Le montant total à régler s'élève à : {self.montant_total_output}.",
             0,
             1,
             "C",
