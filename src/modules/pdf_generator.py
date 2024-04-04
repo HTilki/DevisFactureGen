@@ -1,12 +1,6 @@
-import base64
 from datetime import datetime
 
 from fpdf import FPDF
-
-
-def create_download_link(val: bytearray, filename: str) -> str:
-    b64 = base64.b64encode(val)  # val looks like b'...'
-    return f'<a href="data:application/octet-stream;base64,{b64.decode()}" download="{filename}.pdf">Télécharger le document</a>'
 
 
 class DEVIS_FACTURE(FPDF):
@@ -33,7 +27,7 @@ class DEVIS_FACTURE(FPDF):
 
     def header(self):
         # Ajouter le logo en haut à droite
-        self.image("images/as_auto.png", 150, 10, 50)
+        self.image("imgs/as_auto.png", 150, 10, 50)
 
         # Informations du client en dessous du logo à droite
         self.set_font("Arial", "", 10)
