@@ -3,8 +3,8 @@ import pandas as pd
 import streamlit as st
 from num2words import num2words
 
-from src.modules.app_func import get_reference
-from src.modules.pdf_generator import DEVIS_FACTURE, create_download_link
+from src.modules.app_func import get_reference, create_download_link
+from src.modules.pdf_generator import DEVIS_FACTURE
 from src.modules.login_page import check_password
 
 if not check_password():
