@@ -83,9 +83,9 @@ with col_prest:
     if gen_doc:
         try:
             st.session_state["montant_total_output"] = str(
-                str(round(df["total_prest"].sum(), 2))
+                str(round(df["total_prest"].sum(skipna=True), 2))
                 +" euros ("
-                + str(num2words(round(df["total_prest"].sum(), 2), to="currency", lang="fr"))
+                + str(num2words(round(df["total_prest"].sum(skipna=True), 2), to="currency", lang="fr"))
                 + ")"
             )
             st.session_state["ref"] = get_reference(st.session_state)
