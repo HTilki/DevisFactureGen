@@ -28,7 +28,6 @@ class DEVIS_FACTURE(FPDF):
     def header(self):
         # Ajouter le logo en haut à droite
         self.image("imgs/as_auto.png", 150, 10, 50)
-
         # Informations du client en dessous du logo à droite
         self.set_font("Arial", "", 10)
         self.set_xy(90, 70)
@@ -88,7 +87,7 @@ class DEVIS_FACTURE(FPDF):
         self.cell(col_width, 10, self.modele, 1)
         self.cell(col_width, 10, self.immatriculation, 1)
         self.cell(col_width, 10, self.nserie, 1)
-        self.cell(col_width, 10, str(self.kilometrage), 1)
+        self.cell(col_width, 10, str(self.kilometrage) + " km", 1)
 
         # Aller à la ligne suivante
         self.ln(20)
@@ -109,10 +108,18 @@ class DEVIS_FACTURE(FPDF):
 
         # Remplir le tableau des prestations avec les données du dataframe
         for _, row in self.prestations.iterrows():
+            if row["prix"] is None:
+                row["prix"] = ""
+            else:
+                row["prix"] = str(row["prix"]) + " euros"
+            if row["total_prest"] is None:
+                row["total_prest"] = ""
+            else:
+                row["total_prest"] = str(row["total_prest"]) + " euros"
             self.cell(large_col_width, 10, row["type_prestation"], 1)
             self.cell(small_col_width, 10, str(row["quantite"]), 1)
-            self.cell(small_col_width, 10, str(row["prix"]) + " euros", 1)
-            self.cell(small_col_width, 10, str(row["total_prest"]) + " euros", 1)
+            self.cell(small_col_width, 10, row["prix"], 1)
+            self.cell(small_col_width, 10, row["prix"], 1)
             self.ln(10)
 
         self.ln(20)

@@ -1,4 +1,3 @@
-
 import pandas as pd
 import streamlit as st
 from num2words import num2words
@@ -16,11 +15,16 @@ st.title(f"🚗 {st.secrets.nom_ent} :red[DEVIS] et :blue[FACTURE]")
 st.sidebar.image("imgs/as_auto.png", width=200)
 
 type_document = st.sidebar.selectbox(
-    "Choisir le type de document voulu.", ("Devis", "Facture"), key="type_document"
+    "Choisir le type de document voulu.", ("Devis", "Facture"), 
+    key="type_document",
+    help="Attention à ne pas se tromper de type de document ! "
 )
 
 date = st.sidebar.date_input("Date du document :", format="DD/MM/YYYY")
-st.sidebar.title("Informations Client:")
+st.sidebar.title(
+    "Informations Client:",
+    help="Ici il faut remplir les informations du client.",
+)
 nom = st.sidebar.text_input("Nom:", key="nom")
 prenom = st.sidebar.text_input("Prénom:", key="prenom")
 telephone = st.sidebar.text_input("Tél:", key="telephone")
@@ -31,7 +35,7 @@ adresse = st.sidebar.text_input("Adresse postale:", key="adresse")
 col_voit, col_vide, col_prest = st.columns(spec=[0.15, 0.01, 0.84])
 
 with col_voit:
-    st.title("Info voiture:")
+    st.title("Info voiture:", help="Ici il faut remplir les informations du véhicule.")
     marque = st.text_input("Marque", key="marque")
     modele = st.text_input("Modèle", key="modele")
     immatriculation = st.text_input("Immatriculation", key="immatriculation")
@@ -39,14 +43,17 @@ with col_voit:
     kilometrage = st.number_input(
         "Kilométrage",
         min_value=0,
-        max_value=1500000,
+        max_value=2000000,
         step=10000,
-        value=None,
+        value=100000,
         key="kilometrage",
     )
 
 with col_prest:
-    st.title("Prestations effectué")
+    st.title(
+        "Prestations effectué",
+        help="Ici il faut ajouter ce qui a été fait sur le véhicule, ATTENTION ⚠️, seul le Total 💸 compte dans ce tableau, le prix et la quantité sont la juste pour l'esthétique du tableau.",
+    )
 
     with st.container():
         data_init = pd.DataFrame(
@@ -58,15 +65,15 @@ with col_prest:
             }
         )
         config = {
-            "type_prestation": st.column_config.TextColumn("Prestation"),
+            "type_prestation": st.column_config.TextColumn("Prestation 🔧", default=""),
             "quantite": st.column_config.NumberColumn(
-                "Quantité", width="small", default=1, min_value=0
+                "Quantité 👨🏽‍🔧", width="small", default=1, min_value=0
             ),
             "prix": st.column_config.NumberColumn(
-                "Prix", min_value=0, max_value=100000
+                "Prix 💶", width="small", min_value=0, max_value=100000
             ),
             "total_prest": st.column_config.NumberColumn(
-                "Total", min_value=0, max_value=100000
+                "Total 💸", width="small", min_value=0, max_value=100000
             ),
         }
         df = st.data_editor(
@@ -74,7 +81,7 @@ with col_prest:
             column_config=config,
             num_rows="dynamic",
             use_container_width=True,
-            key="data_edit",    
+            key="data_edit",
         )
         st.session_state["prestations"] = df
         data = st.session_state["prestations"]
@@ -84,8 +91,14 @@ with col_prest:
         try:
             st.session_state["montant_total_output"] = str(
                 str(round(df["total_prest"].sum(skipna=True), 2))
-                +" euros ("
-                + str(num2words(round(df["total_prest"].sum(skipna=True), 2), to="currency", lang="fr"))
+                + " euros ("
+                + str(
+                    num2words(
+                        round(df["total_prest"].sum(skipna=True), 2),
+                        to="currency",
+                        lang="fr",
+                    )
+                )
                 + ")"
             )
             st.session_state["ref"] = get_reference(st.session_state)
@@ -97,11 +110,12 @@ with col_prest:
                 pdf.output(dest="S").encode("latin-1"), st.session_state["ref"]
             )
             st.markdown(html, unsafe_allow_html=True)
-        except Exception as e: 
+        except Exception as e:
             st.error(
                 f"""
                 Erreur lors de la génération du fichier, vérifiez bien que toutes les cellules sont renseignés. 
                 Il ne pas y avoir des lignes en trop et vide. 
 
-                {e}""", 
-                icon="🚨")
+                {e}""",
+                icon="🚨",
+            )
