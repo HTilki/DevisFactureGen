@@ -75,8 +75,7 @@ with col_prest:
             )
             + ")"
         )
-        st.write(round(df["total_prest"].sum(skipna=True), 2))
-        st.write(st.session_state["montant_total_output"])
+        st.write(f"TOTAL : {st.session_state["montant_total_output"]}")
         st.session_state["ref"] = get_reference(st.session_state)
         try:
             pdf = DEVIS_FACTURE(st.session_state, st.secrets)
