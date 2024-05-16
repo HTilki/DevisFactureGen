@@ -61,10 +61,14 @@ with col_prest:
         st.session_state["prestations"] = df
         data = st.session_state["prestations"]
 
+    ajout_signature = st.checkbox(
+        "Ajouter les signatures.",
+        help="En cliquant sur la case, le document contiendra à la fin un texte pour que les deux parties le signent.",
+    )
     generate_doc = st.button("Générer document")
     if generate_doc:
         st.session_state["montant_total_output"] = str(
-            format(round(df["total_prest"].sum(skipna=True), 2), '.2f')
+            format(round(df["total_prest"].sum(skipna=True), 2), ".2f")
             + " euros ("
             + str(
                 num2words(
@@ -84,6 +88,8 @@ with col_prest:
             pdf.info_voitures()
             pdf.tableau_prestations()
             pdf.total_document()
+            if ajout_signature:
+                pdf.signatures()
             html = create_download_link(
                 pdf.output(dest="S").encode("latin-1"), st.session_state["ref"]
             )

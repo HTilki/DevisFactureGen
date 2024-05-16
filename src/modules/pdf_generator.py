@@ -42,9 +42,11 @@ class DEVIS_FACTURE(FPDF):
         self.cell(0, 5, f"Email: {self.email}", 0, 1, "R")
 
         # Titre en haut à gauche
+        type_doc_w = len(self.type_document) * 6
+
         self.set_xy(20, 20)
         self.set_font("Arial", "B", 20)
-        self.cell(0, 10, self.type_document.upper(), 0, 1, "L")
+        self.cell(type_doc_w, 10, self.type_document.upper(), 1, 1, "C")
 
         # Sous-titre en plus petit
         self.set_xy(10, 40)
@@ -126,11 +128,11 @@ class DEVIS_FACTURE(FPDF):
             if math.isnan(row["prix"]):
                 row["prix"] = ""
             else:
-                row["prix"] = format(row["prix"], '.2f') + " euros"
+                row["prix"] = format(row["prix"], ".2f") + " euros"
             if math.isnan(row["total_prest"]):
                 row["total_prest"] = ""
             else:
-                row["total_prest"] = format(row["total_prest"], '.2f') + " euros"
+                row["total_prest"] = format(row["total_prest"], ".2f") + " euros"
             self.cell(large_col_width, 10, row["type_prestation"], 1)
             self.cell(small_col_width, 10, row["quantite"], 1, align="C")
             self.cell(small_col_width, 10, row["prix"], 1, align="R")
@@ -148,11 +150,49 @@ class DEVIS_FACTURE(FPDF):
             f"Le montant total à régler s'élève à : {self.montant_total_output}.",
             0,
             1,
-            "C",    
+            "C",
         )
+        self.ln(20)
+
     def signatures(self):
         """Ajoute le texte pour la signature du document par les deux parties."""
-    ...
+        self.set_font("Helvetica", size=11)
+        self.set_x(20)
+        self.cell(
+            0,
+            10,
+            "Le Client",
+            0,
+            align="L",
+        )
+        self.set_x(160)
+        self.cell(
+            0,
+            10,
+            "La Société",
+            0,
+            1,
+            align="L",
+        )
+        self.set_x(25)
+        self.cell(
+            50,
+            30,
+            "",
+            1,
+            align="L",
+        )
+        self.set_x(135)
+        self.cell(
+            50,
+            30,
+            "",
+            1,
+            align="L",
+        )
+
+
+
 
 def create_download_link(val: bytearray, filename: str) -> str:
     b64 = base64.b64encode(val)
