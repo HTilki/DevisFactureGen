@@ -94,10 +94,10 @@ with col_prest:
                 pdf.output(dest="S").encode("latin-1"), st.session_state["ref"]
             )
             st.markdown(html, unsafe_allow_html=True)
-        except RecursionError as e:
+        except Exception as e:
             st.error(
                 f"""
-                Erreur lors de la génération du fichier, il y a trop de prestations, la limite est de 7. 
+                Erreur lors de la génération du fichier, Vérifiez bien les prestations que vous avez renseigné. 
                 {e}""",
                 icon="🚨",
             )
