@@ -1,10 +1,14 @@
 from datetime import datetime
 
 from fpdf import FPDF
+import base64
+
+from streamlit.runtime.state.session_state_proxy import SessionStateProxy
+from streamlit.runtime.secrets import Secrets
 
 
 class DEVIS_FACTURE(FPDF):
-    def __init__(self, session_state, secrets):
+    def __init__(self, session_state: SessionStateProxy, secrets: Secrets):
         super().__init__()
         self.type_document = session_state["type_document"]
         self.nom = session_state["nom"]
@@ -25,7 +29,7 @@ class DEVIS_FACTURE(FPDF):
         self.telephone_ent = secrets["telephone_ent"]
         self.siret = secrets["siret"]
 
-    def header(self):
+    def entete(self):
         # Ajouter le logo en haut à droite
         self.image("imgs/as_auto.png", 150, 10, 50)
         # Informations du client en dessous du logo à droite
@@ -67,17 +71,19 @@ class DEVIS_FACTURE(FPDF):
         # Sauter une ligne avant le tableau des informations sur le véhicule
         self.ln(8)
 
+    def info_voitures(self):
+        """Affiche les informations du véhicule."""
         # Ajouter le tableau des informations sur le véhicule
         self.set_font("Helvetica", "", 10)
         self.cell(0, 10, "Informations sur le véhicule", 0, 1, "C")
 
         # Définir les colonnes du tableau
         col_width = (self.w - 2 * self.l_margin) / 5
-        self.cell(col_width, 10, "Marque", 1)
-        self.cell(col_width, 10, "Modèle", 1)
-        self.cell(col_width, 10, "Immatriculation", 1)
-        self.cell(col_width, 10, "Numéro de série", 1)
-        self.cell(col_width, 10, "Kilométrage", 1)
+        self.cell(col_width, 10, "Marque", 1, align="C")
+        self.cell(col_width, 10, "Modèle", 1, align="C")
+        self.cell(col_width, 10, "Immatriculation", 1, align="C")
+        self.cell(col_width, 10, "Numéro de série", 1, align="C")
+        self.cell(col_width, 10, "Kilométrage", 1, align="C")
 
         # Aller à la ligne suivante
         self.ln(10)
@@ -85,12 +91,15 @@ class DEVIS_FACTURE(FPDF):
         # Remplir le tableau avec les données du véhicule
         self.cell(col_width, 10, self.marque, 1)
         self.cell(col_width, 10, self.modele, 1)
-        self.cell(col_width, 10, self.immatriculation, 1)
-        self.cell(col_width, 10, self.nserie, 1)
-        self.cell(col_width, 10, str(self.kilometrage) + " km", 1)
+        self.cell(col_width, 10, self.immatriculation, 1, align="C")
+        self.cell(col_width, 10, self.nserie, 1, align="C")
+        self.cell(col_width, 10, str(self.kilometrage) + " km", 1, align="C")
 
         # Aller à la ligne suivante
         self.ln(20)
+
+    def tableau_prestations(self):
+        """Créer le tableau des prestations effectuées."""
         # Ajouter le tableau des prestations
         self.set_font("Helvetica", "", 10)
         self.cell(0, 10, "Liste des prestations", 0, 1, "C")
@@ -100,30 +109,37 @@ class DEVIS_FACTURE(FPDF):
         small_col_width = (self.w - 2 * self.l_margin - large_col_width) / 3
 
         # Entêtes du tableau
-        self.cell(large_col_width, 10, "Type de prestation", 1)
-        self.cell(small_col_width, 10, "Quantité", 1)
-        self.cell(small_col_width, 10, "Prix", 1)
-        self.cell(small_col_width, 10, "Total", 1)
+        self.cell(large_col_width, 10, "Type de prestation", 1, align="C")
+        self.cell(small_col_width, 10, "Quantité", 1, align="C")
+        self.cell(small_col_width, 10, "Prix", 1, align="C")
+        self.cell(small_col_width, 10, "Total", 1, align="C")
         self.ln(10)
 
         # Remplir le tableau des prestations avec les données du dataframe
+
         for _, row in self.prestations.iterrows():
+            if row["quantite"] is None:
+                row["quantite"] = ""
+            else:
+                row["quantite"] = str(row["quantite"])
             if row["prix"] is None:
                 row["prix"] = ""
             else:
-                row["prix"] = str(row["prix"]) + " euros"
+                row["prix"] = format(row["prix"], '.2f') + " euros"
             if row["total_prest"] is None:
                 row["total_prest"] = ""
             else:
-                row["total_prest"] = str(row["total_prest"]) + " euros"
+                row["total_prest"] = format(row["total_prest"], '.2f') + " euros"
             self.cell(large_col_width, 10, row["type_prestation"], 1)
-            self.cell(small_col_width, 10, str(row["quantite"]), 1)
-            self.cell(small_col_width, 10, row["prix"], 1)
-            self.cell(small_col_width, 10, row["prix"], 1)
+            self.cell(small_col_width, 10, row["quantite"], 1, align="C")
+            self.cell(small_col_width, 10, row["prix"], 1, align="R")
+            self.cell(small_col_width, 10, row["total_prest"], 1, align="R")
             self.ln(10)
 
         self.ln(20)
         # Ajouter le montant total
+
+    def fin_document(self):
         self.set_font("Helvetica", "B", 12)
         self.cell(
             0,
@@ -133,3 +149,8 @@ class DEVIS_FACTURE(FPDF):
             1,
             "C",
         )
+
+
+def create_download_link(val: bytearray, filename: str) -> str:
+    b64 = base64.b64encode(val)
+    return f'<a href="data:application/octet-stream;base64,{b64.decode()}" download="{filename}.pdf">↪️Cliquez ici pour télécharger le document.↩️</a>'

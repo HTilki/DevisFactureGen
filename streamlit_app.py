@@ -1,9 +1,9 @@
-import pandas as pd
 import streamlit as st
 from num2words import num2words
 
-from src.modules.app_func import get_reference, create_download_link
-from src.modules.pdf_generator import DEVIS_FACTURE
+from src.modules.reference import get_reference
+from src.modules.tab_prestations import tab_prestations
+from src.modules.pdf_generator import DEVIS_FACTURE, create_download_link
 from src.modules.login_page import check_password
 
 if not check_password():
@@ -15,9 +15,10 @@ st.title(f"🚗 {st.secrets.nom_ent} :red[DEVIS] et :blue[FACTURE]")
 st.sidebar.image("imgs/as_auto.png", width=200)
 
 type_document = st.sidebar.selectbox(
-    "Choisir le type de document voulu.", ("Devis", "Facture"), 
+    "Choisir le type de document voulu.",
+    ("Devis", "Facture"),
     key="type_document",
-    help="Attention à ne pas se tromper de type de document ! "
+    help="Attention à ne pas se tromper de type de document ! ",
 )
 
 date = st.sidebar.date_input("Date du document :", format="DD/MM/YYYY")
@@ -56,66 +57,42 @@ with col_prest:
     )
 
     with st.container():
-        data_init = pd.DataFrame(
-            {
-                "type_prestation": ["None"],
-                "quantite": [None],
-                "prix": [None],
-                "total_prest": [None],
-            }
-        )
-        config = {
-            "type_prestation": st.column_config.TextColumn("Prestation 🔧", default=""),
-            "quantite": st.column_config.NumberColumn(
-                "Quantité 👨🏽‍🔧", width="small", default=1, min_value=0
-            ),
-            "prix": st.column_config.NumberColumn(
-                "Prix 💶", width="small", min_value=0, max_value=100000
-            ),
-            "total_prest": st.column_config.NumberColumn(
-                "Total 💸", width="small", min_value=0, max_value=100000
-            ),
-        }
-        df = st.data_editor(
-            data_init[1:],
-            column_config=config,
-            num_rows="dynamic",
-            use_container_width=True,
-            key="data_edit",
-        )
+        df = tab_prestations()
         st.session_state["prestations"] = df
         data = st.session_state["prestations"]
 
-    gen_doc = st.button("Générer document")
-    if gen_doc:
-        try:
-            st.session_state["montant_total_output"] = str(
-                str(round(df["total_prest"].sum(skipna=True), 2))
-                + " euros ("
-                + str(
-                    num2words(
-                        round(df["total_prest"].sum(skipna=True), 2),
-                        to="currency",
-                        lang="fr",
-                    )
+    generate_doc = st.button("Générer document")
+    if generate_doc:
+        st.session_state["montant_total_output"] = str(
+            format(round(df["total_prest"].sum(skipna=True), 2), '.2f')
+            + " euros ("
+            + str(
+                num2words(
+                    round(df["total_prest"].sum(skipna=True), 2),
+                    to="currency",
+                    lang="fr",
                 )
-                + ")"
             )
-            st.session_state["ref"] = get_reference(st.session_state)
-
+            + ")"
+        )
+        st.write(round(df["total_prest"].sum(skipna=True), 2))
+        st.write(st.session_state["montant_total_output"])
+        st.session_state["ref"] = get_reference(st.session_state)
+        try:
             pdf = DEVIS_FACTURE(st.session_state, st.secrets)
             pdf.add_page()
-
+            pdf.entete()
+            pdf.info_voitures()
+            pdf.tableau_prestations()
+            pdf.fin_document()
             html = create_download_link(
                 pdf.output(dest="S").encode("latin-1"), st.session_state["ref"]
             )
             st.markdown(html, unsafe_allow_html=True)
-        except Exception as e:
+        except RecursionError as e:
             st.error(
                 f"""
-                Erreur lors de la génération du fichier, vérifiez bien que toutes les cellules sont renseignés. 
-                Il ne pas y avoir des lignes en trop et vide. 
-
+                Erreur lors de la génération du fichier, il y a trop de prestations, la limite est de 7. 
                 {e}""",
                 icon="🚨",
             )
