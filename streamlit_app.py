@@ -4,10 +4,10 @@ from num2words import num2words
 from src.modules.reference import get_reference
 from src.modules.tab_prestations import tab_prestations
 from src.modules.pdf_generator import DEVIS_FACTURE, create_download_link
-from src.modules.login_page import check_password
+#from src.modules.login_page import check_password
 
-if not check_password():
-    st.stop()
+#if not check_password():
+#    st.stop()
 
 st.set_page_config(page_title=st.secrets["nom_ent"], page_icon="💻", layout="wide")
 st.title(f"🚗 {st.secrets.nom_ent} :red[DEVIS] et :blue[FACTURE]")
