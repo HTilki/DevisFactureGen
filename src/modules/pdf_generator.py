@@ -2,6 +2,7 @@ from datetime import datetime
 
 from fpdf import FPDF
 import base64
+import math
 
 from streamlit.runtime.state.session_state_proxy import SessionStateProxy
 from streamlit.runtime.secrets import Secrets
@@ -122,11 +123,11 @@ class DEVIS_FACTURE(FPDF):
                 row["quantite"] = ""
             else:
                 row["quantite"] = str(row["quantite"])
-            if row["prix"] is None:
+            if math.isnan(row["prix"]):
                 row["prix"] = ""
             else:
                 row["prix"] = format(row["prix"], '.2f') + " euros"
-            if row["total_prest"] is None:
+            if math.isnan(row["total_prest"]):
                 row["total_prest"] = ""
             else:
                 row["total_prest"] = format(row["total_prest"], '.2f') + " euros"
@@ -137,9 +138,9 @@ class DEVIS_FACTURE(FPDF):
             self.ln(10)
 
         self.ln(20)
-        # Ajouter le montant total
 
-    def fin_document(self):
+    def total_document(self):
+        """Ajoute le total à régler en se basant sur les prestations."""
         self.set_font("Helvetica", "B", 12)
         self.cell(
             0,
@@ -147,9 +148,11 @@ class DEVIS_FACTURE(FPDF):
             f"Le montant total à régler s'élève à : {self.montant_total_output}.",
             0,
             1,
-            "C",
+            "C",    
         )
-
+    def signatures(self):
+        """Ajoute le texte pour la signature du document par les deux parties."""
+    ...
 
 def create_download_link(val: bytearray, filename: str) -> str:
     b64 = base64.b64encode(val)

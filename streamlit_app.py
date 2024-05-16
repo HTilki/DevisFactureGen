@@ -83,7 +83,7 @@ with col_prest:
             pdf.entete()
             pdf.info_voitures()
             pdf.tableau_prestations()
-            pdf.fin_document()
+            pdf.total_document()
             html = create_download_link(
                 pdf.output(dest="S").encode("latin-1"), st.session_state["ref"]
             )

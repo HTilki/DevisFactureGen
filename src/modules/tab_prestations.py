@@ -7,7 +7,7 @@ def tab_prestations() -> pd.DataFrame:
     data_init = pd.DataFrame(
         {
             "type_prestation": ["None"],
-            "quantite": [1],
+            "quantite": [None],
             "prix": [None],
             "total_prest": [None],
         }
