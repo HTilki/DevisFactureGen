@@ -192,8 +192,6 @@ class DEVIS_FACTURE(FPDF):
         )
 
 
-
-
 def create_download_link(val: bytearray, filename: str) -> str:
     b64 = base64.b64encode(val)
     return f'<a href="data:application/octet-stream;base64,{b64.decode()}" download="{filename}.pdf">↪️Cliquez ici pour télécharger le document.↩️</a>'
