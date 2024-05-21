@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from fpdf import FPDF
 import base64
 import math
@@ -12,6 +10,7 @@ class DEVIS_FACTURE(FPDF):
     def __init__(self, session_state: SessionStateProxy, secrets: Secrets):
         super().__init__()
         self.type_document = session_state["type_document"]
+        self.date = session_state["date"]
         self.nom = session_state["nom"]
         self.prenom = session_state["prenom"]
         self.telephone = session_state["telephone"]
@@ -67,7 +66,7 @@ class DEVIS_FACTURE(FPDF):
         self.ln(10)
 
         # Ajouter la référence de la facture et la date
-        date_actuelle = datetime.now().strftime("%d-%m-%Y")
+        date_actuelle = self.date.strftime("%d-%m-%Y")
         self.cell(0, 10, f"Référence facture : {self.ref}", 0, 1, "L")
         self.cell(0, 10, f"Date : {date_actuelle}", 0, 1, "L")
 

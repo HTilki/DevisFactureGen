@@ -4,9 +4,9 @@ from num2words import num2words
 from src.modules.reference import get_reference
 from src.modules.tab_prestations import tab_prestations
 from src.modules.pdf_generator import DEVIS_FACTURE, create_download_link
-#from src.modules.login_page import check_password
+# from src.modules.login_page import check_password
 
-#if not check_password():
+# if not check_password():
 #    st.stop()
 
 st.set_page_config(page_title=st.secrets["nom_ent"], page_icon="💻", layout="wide")
@@ -21,7 +21,7 @@ type_document = st.sidebar.selectbox(
     help="Attention à ne pas se tromper de type de document ! ",
 )
 
-date = st.sidebar.date_input("Date du document :", format="DD/MM/YYYY")
+date = st.sidebar.date_input("Date du document :", format="DD/MM/YYYY", key="date")
 st.sidebar.title(
     "Informations Client:",
     help="Ici il faut remplir les informations du client.",
