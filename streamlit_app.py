@@ -26,10 +26,10 @@ st.sidebar.title(
     "Informations Client:",
     help="Ici il faut remplir les informations du client.",
 )
-nom = st.sidebar.text_input("Nom:", key="nom")
-prenom = st.sidebar.text_input("Prénom:", key="prenom")
-telephone = st.sidebar.text_input("Tél:", key="telephone")
-email = st.sidebar.text_input("Email:", key="email")
+nom = st.sidebar.text_input("Nom:", key="nom", placeholder="Nom")
+prenom = st.sidebar.text_input("Prénom:", key="prenom", placeholder="Prénom")
+telephone = st.sidebar.text_input("Tél:", key="telephone", placeholder="0612345678")
+email = st.sidebar.text_input("Email:", key="email", placeholder="email@email.fr")
 adresse = st.sidebar.text_input("Adresse postale:", key="adresse")
 
 
@@ -37,10 +37,10 @@ col_voit, col_vide, col_prest = st.columns(spec=[0.15, 0.01, 0.84])
 
 with col_voit:
     st.title("Info voiture:", help="Ici il faut remplir les informations du véhicule.")
-    marque = st.text_input("Marque", key="marque")
-    modele = st.text_input("Modèle", key="modele")
-    immatriculation = st.text_input("Immatriculation", key="immatriculation")
-    nserie = st.text_input("Numéro de série", key="nserie")
+    marque = st.text_input("Marque", key="marque", placeholder="Ex: RENAULT")
+    modele = st.text_input("Modèle", key="modele", placeholder="Ex: CLIO")
+    immatriculation = st.text_input("Immatriculation", key="immatriculation", placeholder="AB-123-CD")
+    nserie = st.text_input("Numéro de série", key="nserie", placeholder="1234567890")
     kilometrage = st.number_input(
         "Kilométrage",
         min_value=0,
