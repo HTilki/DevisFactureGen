@@ -50,7 +50,7 @@ class DEVIS_FACTURE(FPDF):
         # Sous-titre en plus petit
         self.set_xy(10, 40)
         self.set_font("Arial", "B", 12)
-        self.cell(10, 10, "AS Mécanique à domicile", 0, 1, "L")
+        self.cell(10, 10, "L'ATELIER AS", 0, 1, "L")
 
         self.set_font("Arial", "", 10)
 
