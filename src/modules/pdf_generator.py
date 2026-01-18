@@ -31,7 +31,7 @@ class DEVIS_FACTURE(FPDF):
 
     def entete(self):
         # Ajouter le logo en haut à droite
-        self.image("imgs/logo.png", 150, 10, 50)
+        self.image("imgs/logo.png", 150, 10, 35)
         # Informations du client en dessous du logo à droite
         self.set_font("Arial", "", 10)
         self.set_xy(90, 70)
