@@ -12,7 +12,7 @@ from src.modules.pdf_generator import DEVIS_FACTURE, create_download_link
 st.set_page_config(page_title=st.secrets["nom_ent"], page_icon="💻", layout="wide")
 st.title(f"🚗 {st.secrets.nom_ent} :red[DEVIS] et :blue[FACTURE]")
 
-st.sidebar.image("imgs/as_auto.png", width=200)
+st.sidebar.image("imgs/logo.png", width=200)
 
 type_document = st.sidebar.selectbox(
     "Choisir le type de document voulu.",
@@ -39,7 +39,9 @@ with col_voit:
     st.title("Info voiture:", help="Ici il faut remplir les informations du véhicule.")
     marque = st.text_input("Marque", key="marque", placeholder="Ex: RENAULT")
     modele = st.text_input("Modèle", key="modele", placeholder="Ex: CLIO")
-    immatriculation = st.text_input("Immatriculation", key="immatriculation", placeholder="AB-123-CD")
+    immatriculation = st.text_input(
+        "Immatriculation", key="immatriculation", placeholder="AB-123-CD"
+    )
     nserie = st.text_input("Numéro de série", key="nserie", placeholder="1234567890")
     kilometrage = st.number_input(
         "Kilométrage",
