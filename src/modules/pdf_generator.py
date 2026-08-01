@@ -167,6 +167,12 @@ class DEVIS_FACTURE(FPDF):
 
     def signatures(self):
         """Ajoute le texte pour la signature du document par les deux parties."""
+        # Le bloc (10 mm de libellés + 30 mm de cadres) doit tenir d'un seul tenant :
+        # on force une nouvelle page plutôt que de le couper en deux.
+        hauteur_bloc = 40
+        if self.get_y() + hauteur_bloc > self.page_break_trigger:
+            self.add_page()
+
         self.set_font("Helvetica", size=11)
         self.set_x(20)
         self.cell(
