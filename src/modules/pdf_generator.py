@@ -28,6 +28,8 @@ class DEVIS_FACTURE(FPDF):
         self.email_ent = secrets["email_ent"]
         self.telephone_ent = secrets["telephone_ent"]
         self.siret = secrets["siret"]
+        self.num_contrat_assurance = secrets["num_contrat_assurance"]
+        self.assureur = secrets["assureur"]
 
     def entete(self):
         # Ajouter le logo en haut à droite
@@ -188,6 +190,23 @@ class DEVIS_FACTURE(FPDF):
             "",
             1,
             align="L",
+        )
+
+
+    def mentions_assurance(self):
+        """Ajoute en bas de page les mentions d'assurance, obligatoires sur les factures."""
+        if self.type_document.lower() != "facture":
+            return
+
+        self.set_y(-25)
+        self.set_font("Helvetica", "I", 8)
+        self.multi_cell(
+            0,
+            4,
+            f"Assurance professionnelle : {self.assureur} - "
+            f"Contrat n° {self.num_contrat_assurance}",
+            0,
+            "C",
         )
 
 

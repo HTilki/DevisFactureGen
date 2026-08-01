@@ -92,6 +92,7 @@ with col_prest:
             pdf.total_document()
             if ajout_signature:
                 pdf.signatures()
+            pdf.mentions_assurance()
             html = create_download_link(
                 pdf.output(dest="S").encode("latin-1"), st.session_state["ref"]
             )
