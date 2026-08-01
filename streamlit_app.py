@@ -16,8 +16,14 @@ page_devis = st.Page(
     default=True,
     url_path="devis-facture",
 )
+page_cession = st.Page(
+    "src/pages/certificat_cession.py",
+    title="Certificat de cession",
+    icon="📄",
+    url_path="certificat-cession",
+)
 
-navigation = st.navigation([page_devis])
+navigation = st.navigation([page_devis, page_cession])
 
 st.sidebar.image("imgs/logo.png", width=200)
 
