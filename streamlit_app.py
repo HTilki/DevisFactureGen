@@ -9,8 +9,8 @@ from src.modules.pdf_generator import DEVIS_FACTURE, create_download_link
 # if not check_password():
 #    st.stop()
 
-st.set_page_config(page_title=st.secrets["nom_ent"], page_icon="💻", layout="wide")
-st.title(f"🚗 {st.secrets.nom_ent} :red[DEVIS] et :blue[FACTURE]")
+st.set_page_config(page_title=st.secrets["entreprise_nom"], page_icon="💻", layout="wide")
+st.title(f"🚗 {st.secrets.entreprise_nom} :red[DEVIS] et :blue[FACTURE]")
 
 st.sidebar.image("imgs/logo.png", width=200)
 
@@ -92,7 +92,6 @@ with col_prest:
             pdf.total_document()
             if ajout_signature:
                 pdf.signatures()
-            pdf.mentions_assurance()
             html = create_download_link(
                 pdf.output(dest="S").encode("latin-1"), st.session_state["ref"]
             )
