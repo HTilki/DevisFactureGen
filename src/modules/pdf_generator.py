@@ -24,10 +24,22 @@ class DEVIS_FACTURE(FPDF):
         self.ref = session_state["ref"]
         self.prestations = session_state["prestations"]
         self.montant_total_output = session_state["montant_total_output"]
-        self.adresse_ent = secrets["adresse_ent"]
-        self.email_ent = secrets["email_ent"]
-        self.telephone_ent = secrets["telephone_ent"]
-        self.siret = secrets["siret"]
+        self.nom_ent = secrets["entreprise_nom"]
+        self.adresse_ent = (
+            f"{secrets['entreprise_adresse_rue']}, "
+            f"{secrets['entreprise_adresse_code_postale']} "
+            f"{secrets['entreprise_adresse_ville']}"
+        )
+        self.email_ent = secrets["entreprise_email"]
+        self.telephone_ent = secrets["entreprise_telephone"]
+        self.siret = f"{secrets['entreprise_siret']} - APE {secrets['entreprise_ape']}"
+        self.assurance_nom = secrets["assurance_nom"]
+        self.assurance_adresse_rue = secrets["assurance_adresse_rue"]
+        self.assurance_adresse_ville = (
+            f"{secrets['assurance_adresse_code_postale']} "
+            f"{secrets['assurance_adresse_ville']}"
+        )
+        self.assurance_couverture = secrets["assurance_couverture_geographique"]
 
     def entete(self):
         # Ajouter le logo en haut à droite
@@ -50,7 +62,7 @@ class DEVIS_FACTURE(FPDF):
         # Sous-titre en plus petit
         self.set_xy(10, 40)
         self.set_font("Arial", "B", 12)
-        self.cell(10, 10, "L'ATELIER AS", 0, 1, "L")
+        self.cell(10, 10, self.nom_ent, 0, 1, "L")
 
         self.set_font("Arial", "", 10)
 
@@ -155,6 +167,12 @@ class DEVIS_FACTURE(FPDF):
 
     def signatures(self):
         """Ajoute le texte pour la signature du document par les deux parties."""
+        # Le bloc (10 mm de libellés + 30 mm de cadres) doit tenir d'un seul tenant :
+        # on force une nouvelle page plutôt que de le couper en deux.
+        hauteur_bloc = 40
+        if self.get_y() + hauteur_bloc > self.page_break_trigger:
+            self.add_page()
+
         self.set_font("Helvetica", size=11)
         self.set_x(20)
         self.cell(
@@ -189,6 +207,40 @@ class DEVIS_FACTURE(FPDF):
             1,
             align="L",
         )
+
+
+    def footer(self):
+        """Pied de page des factures : rappel de l'entreprise au centre, assurance à droite.
+
+        Appelé automatiquement par FPDF à chaque page. Le devis n'a pas de pied de page.
+        """
+        if self.type_document.lower() != "facture":
+            return
+
+        self.set_font("Helvetica", "", 7)
+        largeur_utile = self.w - 2 * self.l_margin
+
+        # Bloc entreprise, centré
+        depart_y = -18
+        self.set_y(depart_y)
+        for ligne in (
+            self.nom_ent,
+            f"SIRET : {self.siret}",
+            f"Tél : {self.telephone_ent}",
+        ):
+            self.set_x(self.l_margin)
+            self.cell(largeur_utile, 3.5, ligne, 0, 1, "C")
+
+        # Bloc assurance, aligné dans le coin droit
+        self.set_y(depart_y)
+        for ligne in (
+            f"Assurance : {self.assurance_nom}",
+            self.assurance_adresse_rue,
+            self.assurance_adresse_ville,
+            f"Couverture : {self.assurance_couverture}",
+        ):
+            self.set_x(self.l_margin)
+            self.cell(largeur_utile, 3.5, ligne, 0, 1, "R")
 
 
 def create_download_link(val: bytearray, filename: str) -> str:
