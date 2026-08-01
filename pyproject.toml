@@ -12,9 +12,12 @@ fpdf = "^1.7.2"
 streamlit = "^1.31.0"
 num2words = "^0.5.13"
 pandas = "1.5.3"
+pypdf = ">=5.1"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.2.1"
+# Rendu du PDF en image : sert à vérifier le calage du calque sur le CERFA.
+pypdfium2 = "*"
 
 [build-system]
 requires = ["poetry-core"]
