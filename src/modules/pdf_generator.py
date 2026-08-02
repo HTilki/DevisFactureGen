@@ -136,11 +136,11 @@ class DEVIS_FACTURE(FPDF):
                 row["quantite"] = ""
             else:
                 row["quantite"] = str(row["quantite"])
-            if math.isnan(row["prix"]):
+            if row["prix"] is None or math.isnan(row["prix"]):
                 row["prix"] = ""
             else:
                 row["prix"] = format(row["prix"], ".2f") + " euros"
-            if math.isnan(row["total_prest"]):
+            if row["total_prest"] is None or math.isnan(row["total_prest"]):
                 row["total_prest"] = ""
             else:
                 row["total_prest"] = format(row["total_prest"], ".2f") + " euros"
